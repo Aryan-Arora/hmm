@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Mehak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Parisienne&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(130% 110% at 50% 6%, #fcf5f0 0%, #f4e8ee 52%, #ecdfea 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:30px 16px 60px;
+    font-family:'Cormorant Garamond',Georgia,serif;
+    position:relative;
+  }
+
+  /* drifting motes */
+  .mote{
+    position:absolute;
+    border-radius:50%;
+    background:radial-gradient(circle,#ffffff,rgba(255,255,255,0) 70%);
+    filter:blur(.4px);
+    pointer-events:none;
+    animation:drift linear infinite;
+    opacity:0;
+  }
+  @keyframes drift{
+    0%{transform:translateY(30px) translateX(0) scale(.5);opacity:0;}
+    15%{opacity:.55;}
+    85%{opacity:.45;}
+    100%{transform:translateY(-105vh) translateX(var(--dx,0)) scale(1);opacity:0;}
+  }
+
+  .stage{
+    width:min(440px,84vw);
+    transform-origin:50% 92%;
+    animation:sway 8s ease-in-out infinite;
+    flex:0 0 auto;
+  }
+  @keyframes sway{0%,100%{transform:rotate(-1.4deg);}50%{transform:rotate(1.4deg);}}
+
+  svg{width:100%;height:auto;display:block;overflow:visible;}
+
+  /* each flower blooms open on load, scaling around its own centre */
+  .flower{
+    transform-box:fill-box;
+    transform-origin:center;
+    transform:scale(0);
+    animation:bloom .9s cubic-bezier(.22,.9,.28,1.25) forwards;
+  }
+  @keyframes bloom{
+    0%{transform:scale(0);opacity:0;}
+    60%{opacity:1;}
+    75%{transform:scale(calc(var(--s,1) * 1.06));}
+    100%{transform:scale(var(--s,1));opacity:1;}
+  }
+
+  .green,.stem,.wrap,.ribbon{opacity:0;animation:fade 1s ease forwards;}
+  .stem{animation-delay:.05s;}
+  .green{animation-delay:.2s;}
+  .wrap{animation-delay:.9s;}
+  .ribbon{animation-delay:1.05s;}
+  @keyframes fade{to{opacity:1;}}
+
+  .tag{opacity:0;transform-box:fill-box;transform-origin:300px 612px;
+       animation:tagIn .9s cubic-bezier(.3,.8,.4,1) 1.25s forwards;}
+  @keyframes tagIn{
+    0%{opacity:0;transform:translateY(-14px) rotate(2deg);}
+    60%{transform:translateY(4px) rotate(-4deg);}
+    100%{opacity:1;transform:translateY(0) rotate(-3deg);}
+  }
+  .tag text{font-family:'Parisienne',cursive;}
+  @media (prefers-reduced-motion:reduce){
+    .stage,.flower,.tag,.mote{animation:none!important;transform:none!important;opacity:1!important;}
+  }
+
+  /* ---------- invitation card ---------- */
+  .invite{
+    margin-top:-6px;
+    width:min(420px,90vw);
+    background:linear-gradient(180deg,#fffdf9,#fdf3ee);
+    border:1px solid #f0ddcf;
+    border-radius:22px;
+    padding:30px 30px 26px;
+    text-align:center;
+    box-shadow:0 18px 44px rgba(140,70,100,.18);
+    position:relative;
+    z-index:5;
+    opacity:0;transform:translateY(24px);
+    animation:cardUp .9s cubic-bezier(.25,.8,.3,1) 1.6s forwards;
+  }
+  @keyframes cardUp{to{opacity:1;transform:none;}}
+  .invite::before{
+    content:"";position:absolute;top:14px;left:14px;right:14px;bottom:14px;
+    border:1px solid #f1dccd;border-radius:14px;pointer-events:none;
+  }
+  .invite .sprout{font-size:1.4rem;margin-bottom:4px;}
+  .invite h2{
+    font-family:'Parisienne',cursive;
+    font-size:2rem;color:#b34d7c;font-weight:400;line-height:1.1;margin-bottom:8px;
+  }
+  .invite p{
+    font-size:1.32rem;color:#6b5160;line-height:1.45;letter-spacing:.2px;
+  }
+  .invite .date{
+    display:inline-flex;align-items:center;gap:8px;
+    margin:16px 0 20px;padding:7px 18px;
+    border:1px solid #e9c7d8;border-radius:999px;
+    background:#fdeef4;color:#a23a6a;
+    font-size:1.18rem;font-weight:500;letter-spacing:.4px;
+  }
+  .invite .btns{display:flex;gap:14px;justify-content:center;align-items:center;}
+  .btn{
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.22rem;font-weight:600;letter-spacing:.4px;
+    padding:11px 28px;border-radius:999px;cursor:pointer;white-space:nowrap;
+    border:1.5px solid transparent;transition:transform .18s ease,box-shadow .25s ease,background .2s;
+  }
+  .btn.yes{
+    color:#fff;background:linear-gradient(135deg,#e76fa1,#bb4a7a);
+    box-shadow:0 8px 18px rgba(187,74,122,.35);
+  }
+  .btn.yes:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 12px 24px rgba(187,74,122,.45);}
+  .btn.no{
+    color:#a23a6a;background:#fff;border-color:#e9c7d8;
+    position:relative;transition:transform .25s cubic-bezier(.34,1.4,.5,1);
+  }
+  .answer{
+    margin-top:6px;font-size:1.4rem;color:#b34d7c;min-height:1.4em;
+    font-family:'Parisienne',cursive;opacity:0;transition:opacity .4s ease;
+  }
+  .answer.show{opacity:1;}
+
+  /* heart burst */
+  .heart{position:fixed;font-size:20px;pointer-events:none;z-index:30;
+    animation:burst 1.4s ease-out forwards;}
+  @keyframes burst{
+    0%{transform:translate(-50%,-50%) scale(.3);opacity:1;}
+    100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1.1);opacity:0;}
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <svg viewBox="0 0 600 800" role="img" aria-label="A bouquet of sunflowers, roses and daisies for Mehak">
+      <defs>
+        <!-- petal & centre gradients -->
+        <radialGradient id="sunCore" cx="42%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#7c4a1f"/>
+          <stop offset="60%" stop-color="#43230c"/>
+          <stop offset="100%" stop-color="#2a1507"/>
+        </radialGradient>
+        <linearGradient id="sunFront" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#f59e0b"/>
+          <stop offset="55%" stop-color="#ffc524"/>
+          <stop offset="100%" stop-color="#ffe066"/>
+        </linearGradient>
+        <linearGradient id="sunBack" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#d97a06"/>
+          <stop offset="100%" stop-color="#f7b21f"/>
+        </linearGradient>
+
+        <radialGradient id="roseOut" cx="50%" cy="78%" r="80%">
+          <stop offset="0%" stop-color="#e36b97"/>
+          <stop offset="70%" stop-color="#cf5180"/>
+          <stop offset="100%" stop-color="#b23c6c"/>
+        </radialGradient>
+        <radialGradient id="roseMid" cx="50%" cy="80%" r="80%">
+          <stop offset="0%" stop-color="#f088ad"/>
+          <stop offset="100%" stop-color="#d35585"/>
+        </radialGradient>
+        <radialGradient id="roseIn" cx="50%" cy="80%" r="80%">
+          <stop offset="0%" stop-color="#ffb1cd"/>
+          <stop offset="100%" stop-color="#e2729c"/>
+        </radialGradient>
+
+        <linearGradient id="daisyP" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#f2ecf3"/>
+          <stop offset="60%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+        <linearGradient id="daisyP2" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#e7dfe9"/>
+          <stop offset="100%" stop-color="#fbf8fb"/>
+        </linearGradient>
+        <radialGradient id="daisyCore" cx="44%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#ffe07a"/>
+          <stop offset="65%" stop-color="#f0ab12"/>
+          <stop offset="100%" stop-color="#c9870c"/>
+        </radialGradient>
+
+        <linearGradient id="leaf" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#5d9a63"/>
+          <stop offset="100%" stop-color="#9cc6a2"/>
+        </linearGradient>
+
+        <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fbeef4"/>
+          <stop offset="100%" stop-color="#f3dbe6"/>
+        </linearGradient>
+        <linearGradient id="paperBack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f3e3ec"/>
+          <stop offset="100%" stop-color="#e8cdda"/>
+        </linearGradient>
+        <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#e07ba6"/>
+          <stop offset="100%" stop-color="#bb517e"/>
+        </linearGradient>
+
+        <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#5b2a44" flood-opacity="0.18"/>
+        </filter>
+        <filter id="blur"><feGaussianBlur stdDeviation="7"/></filter>
+      </defs>
+
+      <!-- floor shadow -->
+      <ellipse cx="300" cy="760" rx="150" ry="18" fill="#9c5e7a" opacity="0.22" filter="url(#blur)"/>
+
+      <!-- greenery, stems (filled by JS) -->
+      <g class="green" id="green"></g>
+      <g class="stem" id="stems" fill="none" stroke="url(#leaf)" stroke-width="6" stroke-linecap="round"></g>
+
+      <!-- flowers -->
+      <g filter="url(#soft)">
+        <g transform="translate(300 120)"><g class="flower" data-type="daisy" style="--s:.6; animation-delay:.05s"></g></g>
+        <g transform="translate(240 168)"><g class="flower" data-type="daisy" style="--s:.84; animation-delay:.18s"></g></g>
+        <g transform="translate(372 170)"><g class="flower" data-type="daisy" style="--s:.84; animation-delay:.48s"></g></g>
+        <g transform="translate(205 256)"><g class="flower" data-type="rose"  style="--s:1.02; animation-delay:.28s"></g></g>
+        <g transform="translate(400 252)"><g class="flower" data-type="rose"  style="--s:1.02; animation-delay:.38s"></g></g>
+        <g transform="translate(300 215)"><g class="flower" data-type="sun"   style="--s:1.2; animation-delay:.55s"></g></g>
+        <g transform="translate(186 332)"><g class="flower" data-type="sun"   style="--s:.82; animation-delay:.66s"></g></g>
+        <g transform="translate(408 330)"><g class="flower" data-type="daisy" style="--s:.78; animation-delay:.6s"></g></g>
+        <g transform="translate(300 336)"><g class="flower" data-type="rose"  style="--s:.96; animation-delay:.74s"></g></g>
+      </g>
+
+      <!-- wrapping paper -->
+      <g class="wrap">
+        <path d="M150 552 Q300 540 450 552 L372 726 Q300 744 228 726 Z" fill="url(#paperBack)"/>
+        <path d="M168 548 Q300 534 432 548 L360 730 Q300 748 240 730 Z" fill="url(#paper)"/>
+        <g stroke="#d9b6c8" stroke-width="1.4" opacity=".7" fill="none">
+          <path d="M300 540 L300 742"/>
+          <path d="M232 549 L274 736"/>
+          <path d="M368 549 L326 736"/>
+          <path d="M200 551 L256 730"/>
+          <path d="M400 551 L344 730"/>
+        </g>
+      </g>
+
+      <!-- ribbon, bow & hanging tag -->
+      <g class="ribbon">
+        <path d="M300 566 C250 542 236 596 300 572 Z" fill="url(#ribbon)"/>
+        <path d="M300 566 C350 542 364 596 300 572 Z" fill="url(#ribbon)"/>
+        <path d="M296 572 L276 624 L298 606 Z" fill="#c25a86"/>
+        <path d="M304 572 L324 624 L302 606 Z" fill="#c25a86"/>
+        <ellipse cx="300" cy="568" rx="15" ry="12" fill="#d8689a"/>
+        <path d="M300 580 Q298 600 300 612" stroke="#c79bb0" stroke-width="1.4" fill="none"/>
+      </g>
+
+      <g class="tag">
+        <rect x="266" y="612" width="68" height="46" rx="7" fill="#fffdf8" stroke="#ecd9c9" stroke-width="1.5"/>
+        <circle cx="300" cy="618" r="2.6" fill="none" stroke="#c9a87f" stroke-width="1.4"/>
+        <text x="300" y="643" text-anchor="middle" font-size="26" fill="#b34d7c">Mehak</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="invite">
+    <div class="sprout">🌷</div>
+    <h2>Dear Mehak,</h2>
+    <p>Would you like to go on a<br><strong>second date</strong> with me?</p>
+    <div class="date">📅 26 June 2026</div>
+    <div class="btns">
+      <button class="btn yes" id="yes">Yes 💛</button>
+      <button class="btn no" id="no">Maybe not</button>
+    </div>
+    <div class="answer" id="answer"></div>
+  </div>
+
+  <script>
+    const SVGNS='http://www.w3.org/2000/svg';
+    const el=(n,a={})=>{const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+    // petal silhouettes, base at (0,0) pointing up
+    const SUN  ='M0 0 C -8 -22 -9 -52 0 -80 C 9 -52 8 -22 0 0 Z';
+    const DAISY='M0 0 C -8 -16 -10 -48 0 -64 C 10 -48 8 -16 0 0 Z';
+    const ROSE_O='M0 0 C -28 -10 -34 -44 0 -56 C 34 -44 28 -10 0 0 Z';
+    const ROSE_I='M0 0 C -19 -8 -23 -30 0 -40 C 23 -30 19 -8 0 0 Z';
+
+    const RECIPE={
+      sun:{
+        layers:[
+          {n:16,d:SUN,s:1,  rot:0,    fill:'url(#sunBack)'},
+          {n:16,d:SUN,s:.9, rot:11.25,fill:'url(#sunFront)'}
+        ],
+        center:{r:26,fill:'url(#sunCore)',seeds:{n:110,spread:23,c:'#241204',r:1.5}}
+      },
+      rose:{
+        layers:[
+          {n:7,d:ROSE_O,s:1,  rot:0, fill:'url(#roseOut)'},
+          {n:6,d:ROSE_O,s:.72,rot:26,fill:'url(#roseMid)'},
+          {n:5,d:ROSE_I,s:.8, rot:12,fill:'url(#roseIn)'},
+          {n:4,d:ROSE_I,s:.5, rot:42,fill:'url(#roseIn)'}
+        ],
+        center:{r:5,fill:'#9c3566'}
+      },
+      daisy:{
+        layers:[
+          {n:14,d:DAISY,s:1, rot:0,   fill:'url(#daisyP)'},
+          {n:14,d:DAISY,s:.9,rot:12.8,fill:'url(#daisyP2)'}
+        ],
+        center:{r:16,fill:'url(#daisyCore)',seeds:{n:46,spread:13,c:'#c4860c',r:1.3}}
+      }
+    };
+
+    document.querySelectorAll('.flower').forEach(g=>{
+      const r=RECIPE[g.dataset.type];
+      r.layers.forEach(L=>{
+        for(let i=0;i<L.n;i++){
+          const a=(360/L.n)*i+L.rot;
+          g.appendChild(el('path',{d:L.d,fill:L.fill,
+            transform:`rotate(${a}) scale(${L.s})`,
+            stroke:'rgba(120,40,70,.06)','stroke-width':'1'}));
+        }
+      });
+      const c=r.center;
+      g.appendChild(el('circle',{r:c.r,fill:c.fill}));
+      if(c.seeds){ // golden-angle spiral seed head
+        const S=c.seeds;
+        for(let i=0;i<S.n;i++){
+          const rr=S.spread*Math.sqrt(i/S.n), ang=i*2.399963;
+          g.appendChild(el('circle',{
+            cx:(rr*Math.cos(ang)).toFixed(1),
+            cy:(rr*Math.sin(ang)).toFixed(1),
+            r:S.r, fill:S.c, opacity:(0.55+0.45*(1-i/S.n)).toFixed(2)}));
+        }
+      }
+    });
+
+    // stems fanning from the neck up to each flower
+    const neck=[300,548];
+    [[240,176],[300,124],[372,174],[205,258],[400,254],[300,218],[188,334],[408,332],[300,338]]
+      .forEach(([x,y])=>{
+        const cx=(neck[0]+x)/2 + (x-neck[0])*0.12;
+        document.getElementById('stems').appendChild(
+          el('path',{d:`M${neck[0]} ${neck[1]} Q${cx} ${(neck[1]+y)/2} ${x} ${y}`}));
+      });
+
+    // eucalyptus-style sprigs tucked behind the blooms
+    function sprig(angle,len){
+      const g=el('g',{transform:`translate(300 548) rotate(${angle})`}),rad=angle;
+      g.appendChild(el('path',{d:`M0 0 Q ${-len*0.12} ${-len*0.5} 0 ${-len}`,
+        fill:'none',stroke:'#7faf7e','stroke-width':3,'stroke-linecap':'round',opacity:.9}));
+      for(let i=1;i<=6;i++){
+        const t=i/7, y=-len*t, side=i%2?1:-1;
+        g.appendChild(el('ellipse',{cx:side*9,cy:y,rx:8,ry:5,
+          fill:'url(#leaf)',transform:`rotate(${side*38} ${side*9} ${y})`,opacity:.92}));
+      }
+      return g;
+    }
+    const green=document.getElementById('green');
+    [[-58,210],[-26,250],[20,250],[54,205],[-90,150],[88,150]].forEach(([a,l])=>green.appendChild(sprig(a,l)));
+
+    // ---- invitation interaction ----
+    const yes=document.getElementById('yes'),
+          no=document.getElementById('no'),
+          answer=document.getElementById('answer');
+
+    // the "Maybe not" button playfully dodges
+    let dodges=0;
+    function dodge(){
+      dodges++;
+      const dx=(Math.random()*2-1)*90, dy=(Math.random()*2-1)*40;
+      no.style.transform=`translate(${dx}px,${dy}px)`;
+      if(dodges>2) no.textContent=['Maybe not','Hmm…','Are you sure?','Pretty please?','😅'][Math.min(dodges-2,4)];
+    }
+    no.addEventListener('mouseenter',dodge);
+    no.addEventListener('click',dodge);
+
+    function hearts(x,y){
+      const set=['💛','💕','🌻','🌸','💖','🌷'];
+      for(let i=0;i<26;i++){
+        const h=document.createElement('div');
+        h.className='heart';
+        h.textContent=set[Math.floor(Math.random()*set.length)];
+        h.style.left=x+'px'; h.style.top=y+'px';
+        const ang=Math.random()*Math.PI*2, dist=80+Math.random()*220;
+        h.style.setProperty('--tx',Math.cos(ang)*dist+'px');
+        h.style.setProperty('--ty',Math.sin(ang)*dist-60+'px');
+        h.style.fontSize=(14+Math.random()*22)+'px';
+        h.style.animationDelay=(Math.random()*0.2)+'s';
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),1700);
+      }
+    }
+    yes.addEventListener('click',()=>{
+      const r=yes.getBoundingClientRect();
+      hearts(r.left+r.width/2, r.top);
+      no.style.display='none';
+      yes.textContent='Yay! 💛';
+      answer.textContent="It's a date — see you on 26 June 2026 ✨";
+      answer.classList.add('show');
+    });
+
+    // soft drifting motes
+    for(let i=0;i<14;i++){
+      const m=document.createElement('div');
+      m.className='mote';
+      const sz=6+Math.random()*16;
+      m.style.width=m.style.height=sz+'px';
+      m.style.left=Math.random()*100+'vw';
+      m.style.bottom='-30px';
+      m.style.setProperty('--dx',(Math.random()*60-30)+'px');
+      m.style.animationDuration=(11+Math.random()*9)+'s';
+      m.style.animationDelay=(-Math.random()*14)+'s';
+      document.body.appendChild(m);
+    }
+  </script>
+</body>
+</html>
